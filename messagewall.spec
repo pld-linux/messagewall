@@ -18,7 +18,7 @@ Source2:	http://messagewall.org/download/%{firedns}-%{firedns_version}.tar.gz
 # Source2-md5:	0e18e14615036555183ee01b43fffd3c
 Source3:	messagewall.init
 Patch0:		messagewall-rfc_violation.patch
-URL:		http://meesagewall.org/
+URL:		http://messagewall.org/
 BuildRequires:	openssl-devel
 PreReq:		rc-scripts
 Requires(post,preun):/sbin/chkconfig
