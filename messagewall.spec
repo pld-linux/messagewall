@@ -1,27 +1,22 @@
-# TODO: separate firestring and firedns packages (with their own -devel and -static)?
 Summary:	An SMTP proxy with lots of features
 Summary(pl):	Rozbudowany serwer proxy dla SMTP
 Name:		messagewall
-%define firestring firestring
-%define firedns firedns
-%define firestring_version 0.1.23
-%define firedns_version 0.1.30
 Version:	1.0.8
 Release:	0.3
 License:	GPL
 Group:		Networking
 Source0:	http://messagewall.org/download/%{name}-%{version}.tar.gz
 # Source0-md5:	c8bb5538b4f004b56ba680d50c549b8f
-Source1:	http://messagewall.org/download/%{firestring}-%{firestring_version}.tar.gz
-# Source1-md5:	f5d1b6fedbbd4137483efb3864d772b6
-Source2:	http://messagewall.org/download/%{firedns}-%{firedns_version}.tar.gz
-# Source2-md5:	0e18e14615036555183ee01b43fffd3c
 Source3:	messagewall.init
 Patch0:		messagewall-rfc_violation.patch
 URL:		http://messagewall.org/
+BuildRequires:	firedns-devel >= 0.1.30
+BuildRequires:	firestring-devel >= 0.1.23
 BuildRequires:	openssl-devel
 PreReq:		rc-scripts
 Requires(post,preun):/sbin/chkconfig
+Requires:	firedns >= 0.1.30
+Requires:	firestring >= 0.1.23
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -63,29 +58,13 @@ regu³ dot. filtracji wiadomo¶ci.
 
 %prep
 %setup -q -n %{name}
-tar zxf %{SOURCE1}
-tar zxf %{SOURCE2}
-
 %patch0 -p0
 
 %build
+# note: configure script is not autoconf-generated
 export CC="%{__cc}"
-export CFLAGS="%{rpmcflags} -I../firestring"
-# note: configure scripts are not autoconf-generated
-
-cd %{firestring}
-./configure
-%{__make}
-
-cd ../%{firedns}
-echo "-L../firestring -L../firedns -I../firestring -I../firedns" >firemake.ldflags
-./configure
-%{__make}
-cd ..
-
-echo "-L./firestring -L./firedns -I./firestring -I./firedns" >firemake.ldflags
+export CFLAGS="%{rpmcflags}"
 echo "`cat firemake.cflags` -I/usr/include/openssl" >firemake.cflags
-export CFLAGS="%{rpmcflags} -Ifirestring -Ifiredns"
 export CONFDIR=%{_sysconfdir}/mwall
 ./configure
 
@@ -94,20 +73,7 @@ export CONFDIR=%{_sysconfdir}/mwall
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_mandir}/man{1,5},%{_includedir},%{_libdir},%{_bindir}} \
-	$RPM_BUILD_ROOT{%{_sysconfdir}/mwall,/etc/rc.d/init.d}
-
-%{__make} install -C firestring \
-	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
-	MANDIR=$RPM_BUILD_ROOT%{_mandir} \
-	INSTALL_USER="`id -u`" \
-	INSTALL_GROUP="`id -g`"
-
-%{__make} install -C firedns \
-	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
-	MANDIR=$RPM_BUILD_ROOT%{_mandir} \
-	INSTALL_USER="`id -u`" \
-	INSTALL_GROUP="`id -g`"
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/mwall,/etc/rc.d/init.d}
 
 %{__make} install \
 	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
@@ -118,6 +84,11 @@ install -d $RPM_BUILD_ROOT{%{_mandir}/man{1,5},%{_includedir},%{_libdir},%{_bind
 
 #install conf/messagewall.conf $RPM_BUILD_ROOT%{_sysconfdir}/mwall
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/messagewall
+
+# spaces in filenames are ugly and compress-doc doesn't like them
+for f in Light Medium Strong ; do
+	mv -f profiles/${f}\ Plus profiles/${f}_Plus
+done
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -142,7 +113,6 @@ fi
 %defattr(644,root,root,755)
 %doc README doc/draft-sasl-login.txt profiles
 %attr(755,root,root) %{_bindir}/messagewall*
-%attr(755,root,root) %{_libdir}/lib*.so
 %dir %{_sysconfdir}/mwall
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/mwall/*
 %attr(754,root,root) /etc/rc.d/init.d/messagewall
