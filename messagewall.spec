@@ -1,3 +1,4 @@
+# TODO: separate firestring and firedns packages (with their own -devel and -static)?
 Summary:	An SMTP proxy with lots of features
 Summary(pl):	Rozbudowany serwer proxy dla SMTP
 Name:		messagewall
@@ -68,34 +69,55 @@ tar zxf %{SOURCE2}
 %patch0 -p0
 
 %build
-export CFLAGS="-I../firestring" 
+export CC="%{__cc}"
+export CFLAGS="%{rpmcflags} -I../firestring" 
+# note: configure scripts are not autoconf-generated
+
 cd %{firestring} 
 ./configure 
 %{__make} 
-cd ..
-cd %{firedns} 
+
+cd ../%{firedns} 
 echo "-L../firestring -L../firedns -I../firestring -I../firedns" >firemake.ldflags
 ./configure 
 %{__make} 
 cd ..
+
 echo "-L./firestring -L./firedns -I./firestring -I./firedns" >firemake.ldflags
 echo "`cat firemake.cflags` -I/usr/include/openssl" >firemake.cflags
-export CFLAGS="-I./firestring -I./firedns" 
+export CFLAGS="%{rpmcflags} -Ifirestring -Ifiredns" 
 export CONFDIR=%{_sysconfdir}/mwall
 ./configure
-%{__make} PREFIX=%{_prefix} 
+
+%{__make} \
+	PREFIX=%{_prefix} 
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_mandir}/man{1,5},%{_includedir},%{_libdir},%{_bindir}} \
 	$RPM_BUILD_ROOT{%{_sysconfdir}/mwall,/etc/rc.d/init.d}
 
+%{__make} install -C firestring \
+	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
+	MANDIR=$RPM_BUILD_ROOT%{_mandir} \
+	INSTALL_USER="`id -u`" \
+	INSTALL_GROUP="`id -g`"
+	
+%{__make} install -C firedns \
+	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
+	MANDIR=$RPM_BUILD_ROOT%{_mandir} \
+	INSTALL_USER="`id -u`" \
+	INSTALL_GROUP="`id -g`"
+	
 %{__make} install \
-	PREFIX=$RPM_BUILD_ROOT%{_prefix}
+	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
+	MANDIR=$RPM_BUILD_ROOT%{_mandir} \
+	CONFDIR=$RPM_BUILD_ROOT%{_sysconfdir}/mwall \
+	INSTALL_USER="`id -u`" \
+	INSTALL_GROUP="`id -g`"
 
-install conf/messagewall.conf $RPM_BUILD_ROOT%{_sysconfdir}/mwall
+#install conf/messagewall.conf $RPM_BUILD_ROOT%{_sysconfdir}/mwall
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/messagewall
-install fire{string,dns}/*so $RPM_BUILD_ROOT%{_libdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -118,10 +140,10 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc README GPL profiles doc conf
-%attr(755,root,root) %{_bindir}/*
+%doc README doc/draft-sasl-login.txt profiles
+%attr(755,root,root) %{_bindir}/messagewall*
+%attr(755,root,root) %{_libdir}/lib*.so
 %dir %{_sysconfdir}/mwall
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/mwall/*
 %attr(754,root,root) /etc/rc.d/init.d/messagewall
-%{_mandir}/man[15]/*
-%{_libdir}/*
+%{_mandir}/man[15]/messagewall*
