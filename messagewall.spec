@@ -10,8 +10,11 @@ Release:	0.3
 License:	GPL
 Group:		Networking
 Source0:	http://messagewall.org/download/%{name}-%{version}.tar.gz
+# Source0-md5:	c8bb5538b4f004b56ba680d50c549b8f
 Source1:	http://messagewall.org/download/%{firestring}-%{firestring_version}.tar.gz
+# Source1-md5:	f5d1b6fedbbd4137483efb3864d772b6
 Source2:	http://messagewall.org/download/%{firedns}-%{firedns_version}.tar.gz
+# Source2-md5:	0e18e14615036555183ee01b43fffd3c
 Source3:	messagewall.init
 Patch0:		messagewall-rfc_violation.patch
 URL:		http://meesagewall.org/
