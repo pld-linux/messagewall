@@ -1,0 +1,65 @@
+#! /bin/sh
+#
+# messagewall   This shell script takes care of starting and stopping
+#               messagewall.
+#
+# chkconfig:	2345 79 31
+# description:	Messagewall is SMTP proxy started before sendmail.
+#		
+# pidfile:	/var/run/sendmail.pid
+
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# Get network config
+. /etc/sysconfig/network
+
+# Check that networking is up.
+if is_no "${NETWORKING}"; then
+	msg_network_down Sendmail
+	exit 1
+fi
+
+# See how we were called.
+case "$1" in
+  start)
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/messagewall ]; then
+		msg_starting messagewall
+		daemon /usr/bin/messagewall 2>&1 | /usr/bin/logger -t Messagewall -p local1.info &
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/messagewall
+	else
+		msg_already_running messagewall
+		exit 1
+	fi
+	;;
+  stop)
+	# Stop daemons.
+	msg_stopping messagewall
+	killproc messagewall
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/messagewall
+	;;
+  restart|reload)
+	$0 stop
+	$0 start
+	;;
+  condrestart)
+	if [ -f /var/lock/subsys/messagewall ]; then
+	    stop
+	    start
+	    RETVAL=$?
+	fi
+	;;
+  status)
+	status messagewall
+	RETVAL=$?
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart|reload|condrestart|status}"
+	exit 1
+esac
+
+exit $RETVAL
