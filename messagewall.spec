@@ -1,13 +1,12 @@
+Summary:	An SMTP proxy with lots of features
+Summary(pl):	Rozbudowany serwer proxy dla SMTP
 Name:		messagewall
 %define firestring firestring
 %define firedns firedns
-%define version 1.0.8
 %define firestring_version 0.1.23
 %define firedns_version 0.1.30
-Version:	%{version}
+Version:	1.0.8
 Release:	0.3
-Summary:	An SMTP proxy with lots of features
-Summary(pl):	Rozbudowany serwer proxy dla SMTP
 License:	GPL
 Group:		Networking
 Source0:	http://messagewall.org/download/%{name}-%{version}.tar.gz
@@ -15,9 +14,11 @@ Source1:	http://messagewall.org/download/%{firestring}-%{firestring_version}.tar
 Source2:	http://messagewall.org/download/%{firedns}-%{firedns_version}.tar.gz
 Source3:	messagewall.init
 Patch0:		messagewall-rfc_violation.patch
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+URL:		http://meesagewall.org/
 BuildRequires:	openssl-devel
+PreReq:		rc-scripts
 Requires(post,preun):/sbin/chkconfig
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 MessageWall is a free software SMTP proxy. It sits between the outside
@@ -83,16 +84,18 @@ export CONFDIR=%{_sysconfdir}/mwall
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_prefix}/{man/man{1,5},include,lib,bin}
-install -d $RPM_BUILD_ROOT/{%{_sysconfdir}/mwall,/etc/rc.d/init.d/,%{_libdir}}
-%{__make} PREFIX=$RPM_BUILD_ROOT%{_prefix} \
-  install
-install conf/messagewall.conf $RPM_BUILD_ROOT/%{_sysconfdir}/mwall
+install -d $RPM_BUILD_ROOT{%{_mandir}/man{1,5},%{_includedir},%{_libdir},%{_bindir}} \
+	$RPM_BUILD_ROOT{%{_sysconfdir}/mwall,/etc/rc.d/init.d}
+
+%{__make} install \
+	PREFIX=$RPM_BUILD_ROOT%{_prefix}
+
+install conf/messagewall.conf $RPM_BUILD_ROOT%{_sysconfdir}/mwall
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/messagewall
 install fire{string,dns}/*so $RPM_BUILD_ROOT%{_libdir}
 
 %clean
-rm -rf ${RPM_BUILD_ROOT}
+rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add messagewall
@@ -112,14 +115,10 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc README
-%doc GPL
-%doc profiles
-%doc doc
-%doc conf
-%attr(755,root,root) /usr/bin/*
-/usr/man/man1/*
-/usr/man/man5/*
-%config(noreplace) %{_sysconfdir}/mwall/*
-%attr(711,root,root) /etc/rc.d/init.d/messagewall
+%doc README GPL profiles doc conf
+%attr(755,root,root) %{_bindir}/*
+%dir %{_sysconfdir}/mwall
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/mwall/*
+%attr(754,root,root) /etc/rc.d/init.d/messagewall
+%{_mandir}/man[15]/*
 %{_libdir}/*
