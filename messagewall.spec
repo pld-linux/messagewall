@@ -125,17 +125,17 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/chkconfig --add messagewall
 if [ -f /var/lock/subsys/messagewall ]; then
-        /etc/rc.d/init.d/messagewall restart >&2
+	/etc/rc.d/init.d/messagewall restart >&2
 else
-        echo "Run \"/etc/rc.d/init.d/messagewall start\" to start messagewall daemon." >&2
+	echo "Run \"/etc/rc.d/init.d/messagewall start\" to start messagewall daemon." >&2
 fi
 
 %preun
 if [ "$1" = "0" ]; then
-        if [ -f /var/lock/subsys/messagewall ]; then
-                /etc/rc.d/init.d/messagewall stop >&2
-        fi
-        /sbin/chkconfig --del messagewall
+	if [ -f /var/lock/subsys/messagewall ]; then
+		/etc/rc.d/init.d/messagewall stop >&2
+	fi
+	/sbin/chkconfig --del messagewall
 fi
 
 %files
