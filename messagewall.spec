@@ -12,7 +12,7 @@ Patch0:		messagewall-rfc_violation.patch
 URL:		http://messagewall.org/
 BuildRequires:	firedns-devel >= 0.1.30
 BuildRequires:	firestring-devel >= 0.1.23
-BuildRequires:	openssl-devel
+BuildRequires:	openssl-devel >= 0.9.7d
 PreReq:		rc-scripts
 Requires(post,preun):/sbin/chkconfig
 Requires:	firedns >= 0.1.30
