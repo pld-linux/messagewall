@@ -70,27 +70,27 @@ tar zxf %{SOURCE2}
 
 %build
 export CC="%{__cc}"
-export CFLAGS="%{rpmcflags} -I../firestring" 
+export CFLAGS="%{rpmcflags} -I../firestring"
 # note: configure scripts are not autoconf-generated
 
-cd %{firestring} 
-./configure 
-%{__make} 
+cd %{firestring}
+./configure
+%{__make}
 
-cd ../%{firedns} 
+cd ../%{firedns}
 echo "-L../firestring -L../firedns -I../firestring -I../firedns" >firemake.ldflags
-./configure 
-%{__make} 
+./configure
+%{__make}
 cd ..
 
 echo "-L./firestring -L./firedns -I./firestring -I./firedns" >firemake.ldflags
 echo "`cat firemake.cflags` -I/usr/include/openssl" >firemake.cflags
-export CFLAGS="%{rpmcflags} -Ifirestring -Ifiredns" 
+export CFLAGS="%{rpmcflags} -Ifirestring -Ifiredns"
 export CONFDIR=%{_sysconfdir}/mwall
 ./configure
 
 %{__make} \
-	PREFIX=%{_prefix} 
+	PREFIX=%{_prefix}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -102,13 +102,13 @@ install -d $RPM_BUILD_ROOT{%{_mandir}/man{1,5},%{_includedir},%{_libdir},%{_bind
 	MANDIR=$RPM_BUILD_ROOT%{_mandir} \
 	INSTALL_USER="`id -u`" \
 	INSTALL_GROUP="`id -g`"
-	
+
 %{__make} install -C firedns \
 	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
 	MANDIR=$RPM_BUILD_ROOT%{_mandir} \
 	INSTALL_USER="`id -u`" \
 	INSTALL_GROUP="`id -g`"
-	
+
 %{__make} install \
 	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
 	MANDIR=$RPM_BUILD_ROOT%{_mandir} \
