@@ -7,13 +7,13 @@ License:	GPL
 Group:		Networking
 Source0:	http://messagewall.org/download/%{name}-%{version}.tar.gz
 # Source0-md5:	c8bb5538b4f004b56ba680d50c549b8f
-Source3:	messagewall.init
-Patch0:		messagewall-rfc_violation.patch
+Source3:	%{name}.init
+Patch0:		%{name}-rfc_violation.patch
 URL:		http://messagewall.org/
 BuildRequires:	firedns-devel >= 0.1.30
 BuildRequires:	firestring-devel >= 0.1.23
 BuildRequires:	openssl-devel >= 0.9.7d
-PreReq:		rc-scripts
+Requires:	rc-scripts
 Requires(post,preun):/sbin/chkconfig
 Requires:	firedns >= 0.1.30
 Requires:	firestring >= 0.1.23
@@ -38,23 +38,24 @@ specifies addresses and domains with profiles other than the default.
 Each profile contains a set of rules for how to filter mail.
 
 %description -l pl
-MessageWall to serwer proxy dla SMTP opublikowany jako wolne oprogramowanie.
-Jego miejsce znajduje siê pomiêdzy twoim serwerem pocztowym a ¶wiatem, a jego
-zadanie to utrzymaæ z dala wirusy, spam oraz zarz±dzaæ uprawnieniami
-(relaying). Odró¿niaj±cym czynnikiem od wielu innych us³ug tego typu, jest to,
-¿e oferuje swobodn± konfiguracjê na poziomie ka¿dego adresu email. MessageWall
-stosuje system oceniania pozwalaj±cy na odrzucaniu wiadomo¶ci na podstawie
-szeregu regu³ z ró¿nymi wagami i taguj±cy wiadomo¶æ w nag³ówku, je¶li poziom
-oceny do odrzucenia nie zostanie osi±gniêty.
+MessageWall to serwer proxy dla SMTP opublikowany jako wolne
+oprogramowanie. Jego miejsce znajduje siê pomiêdzy twoim serwerem
+pocztowym a ¶wiatem, a jego zadanie to utrzymaæ z dala wirusy, spam
+oraz zarz±dzaæ uprawnieniami (relaying). Odró¿niaj±cym czynnikiem od
+wielu innych us³ug tego typu, jest to, ¿e oferuje swobodn±
+konfiguracjê na poziomie ka¿dego adresu email. MessageWall stosuje
+system oceniania pozwalaj±cy na odrzucaniu wiadomo¶ci na podstawie
+szeregu regu³ z ró¿nymi wagami i taguj±cy wiadomo¶æ w nag³ówku, je¶li
+poziom oceny do odrzucenia nie zostanie osi±gniêty.
 
-MessageWall wspiera tak¿e zaawansowane techniki autentykacji: adres ¼ród³owy,
-SMTP AUTH PLAIN lub LOGIN, jak równie¿ sesje SSL/TLS od klientów oraz do
-w³a¶ciwego serwera poczty.
+MessageWall wspiera tak¿e zaawansowane techniki autentykacji: adres
+¼ród³owy, SMTP AUTH PLAIN lub LOGIN, jak równie¿ sesje SSL/TLS od
+klientów oraz do w³a¶ciwego serwera poczty.
 
 MessageWall pobiera regu³y filtrowania z profili. Plik konfiguracyjny
-definiuje profil domy¶lny, a dodatkowy plik okre¶la adresy i domeny, do
-których nale¿y stosowaæ profil inny ni¿ domy¶lny. Ka¿dy profil zawiera szereg
-regu³ dot. filtracji wiadomo¶ci.
+definiuje profil domy¶lny, a dodatkowy plik okre¶la adresy i domeny,
+do których nale¿y stosowaæ profil inny ni¿ domy¶lny. Ka¿dy profil
+zawiera szereg regu³ dot. filtracji wiadomo¶ci.
 
 %prep
 %setup -q -n %{name}
@@ -64,6 +65,8 @@ regu³ dot. filtracji wiadomo¶ci.
 # note: configure script is not autoconf-generated
 export CC="%{__cc}"
 export CFLAGS="%{rpmcflags}"
+# FIXME this truncates firemake.cflags
+# FIXME file is truncated before it's contents can be cat
 echo "`cat firemake.cflags` -I/usr/include/openssl" >firemake.cflags
 export CONFDIR=%{_sysconfdir}/mwall
 ./configure
@@ -114,6 +117,6 @@ fi
 %doc README doc/draft-sasl-login.txt profiles
 %attr(755,root,root) %{_bindir}/messagewall*
 %dir %{_sysconfdir}/mwall
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/mwall/*
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mwall/*
 %attr(754,root,root) /etc/rc.d/init.d/messagewall
 %{_mandir}/man[15]/messagewall*
