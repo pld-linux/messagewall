@@ -1,5 +1,5 @@
 Summary:	An SMTP proxy with lots of features
-Summary(pl):	Rozbudowany serwer proxy dla SMTP
+Summary(pl.UTF-8):   Rozbudowany serwer proxy dla SMTP
 Name:		messagewall
 Version:	1.0.8
 Release:	0.3
@@ -37,25 +37,25 @@ configuration file defines a default profile, and a seperate file
 specifies addresses and domains with profiles other than the default.
 Each profile contains a set of rules for how to filter mail.
 
-%description -l pl
+%description -l pl.UTF-8
 MessageWall to serwer proxy dla SMTP opublikowany jako wolne
-oprogramowanie. Jego miejsce znajduje siê pomiêdzy twoim serwerem
-pocztowym a ¶wiatem, a jego zadanie to utrzymaæ z dala wirusy, spam
-oraz zarz±dzaæ uprawnieniami (relaying). Odró¿niaj±cym czynnikiem od
-wielu innych us³ug tego typu, jest to, ¿e oferuje swobodn±
-konfiguracjê na poziomie ka¿dego adresu email. MessageWall stosuje
-system oceniania pozwalaj±cy na odrzucaniu wiadomo¶ci na podstawie
-szeregu regu³ z ró¿nymi wagami i taguj±cy wiadomo¶æ w nag³ówku, je¶li
-poziom oceny do odrzucenia nie zostanie osi±gniêty.
+oprogramowanie. Jego miejsce znajduje siÄ™ pomiÄ™dzy twoim serwerem
+pocztowym a Å›wiatem, a jego zadanie to utrzymaÄ‡ z dala wirusy, spam
+oraz zarzÄ…dzaÄ‡ uprawnieniami (relaying). OdrÃ³Å¼niajÄ…cym czynnikiem od
+wielu innych usÅ‚ug tego typu, jest to, Å¼e oferuje swobodnÄ…
+konfiguracjÄ™ na poziomie kaÅ¼dego adresu email. MessageWall stosuje
+system oceniania pozwalajÄ…cy na odrzucaniu wiadomoÅ›ci na podstawie
+szeregu reguÅ‚ z rÃ³Å¼nymi wagami i tagujÄ…cy wiadomoÅ›Ä‡ w nagÅ‚Ã³wku, jeÅ›li
+poziom oceny do odrzucenia nie zostanie osiÄ…gniÄ™ty.
 
-MessageWall wspiera tak¿e zaawansowane techniki autentykacji: adres
-¼ród³owy, SMTP AUTH PLAIN lub LOGIN, jak równie¿ sesje SSL/TLS od
-klientów oraz do w³a¶ciwego serwera poczty.
+MessageWall wspiera takÅ¼e zaawansowane techniki autentykacji: adres
+ÅºrÃ³dÅ‚owy, SMTP AUTH PLAIN lub LOGIN, jak rÃ³wnieÅ¼ sesje SSL/TLS od
+klientÃ³w oraz do wÅ‚aÅ›ciwego serwera poczty.
 
-MessageWall pobiera regu³y filtrowania z profili. Plik konfiguracyjny
-definiuje profil domy¶lny, a dodatkowy plik okre¶la adresy i domeny,
-do których nale¿y stosowaæ profil inny ni¿ domy¶lny. Ka¿dy profil
-zawiera szereg regu³ dot. filtracji wiadomo¶ci.
+MessageWall pobiera reguÅ‚y filtrowania z profili. Plik konfiguracyjny
+definiuje profil domyÅ›lny, a dodatkowy plik okreÅ›la adresy i domeny,
+do ktÃ³rych naleÅ¼y stosowaÄ‡ profil inny niÅ¼ domyÅ›lny. KaÅ¼dy profil
+zawiera szereg reguÅ‚ dot. filtracji wiadomoÅ›ci.
 
 %prep
 %setup -q -n %{name}
