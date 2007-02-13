@@ -1,5 +1,5 @@
 Summary:	An SMTP proxy with lots of features
-Summary(pl.UTF-8):   Rozbudowany serwer proxy dla SMTP
+Summary(pl.UTF-8):	Rozbudowany serwer proxy dla SMTP
 Name:		messagewall
 Version:	1.0.8
 Release:	0.3
