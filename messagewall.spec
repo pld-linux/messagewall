@@ -59,7 +59,7 @@ zawiera szereg reguł dot. filtracji wiadomości.
 
 %prep
 %setup -q -n %{name}
-%patch0 -p0
+%patch -P0 -p0
 
 %build
 # note: configure script is not autoconf-generated
